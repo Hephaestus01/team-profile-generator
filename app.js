@@ -1,7 +1,12 @@
 const inquirer = require('inquirer');
 const fs = require('fs')
 const generatePage = require('./src/page-template');
-const Employee = require('./lib/Employee');
+
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern');
+
+const teamArr = [];
 
 // add questions
 const promptUser = () => {
@@ -33,15 +38,15 @@ const promptUser = () => {
         ])
 
         .then(({ name, id, email, office }) => {
-            this.employee = new Employee(name);
-            this.employee = new Employee(id);
-            this.employee = new Employee(email);
-            this.employee = new Employee(office);
+
+            const manager = new Manager(name, id, email, office);
+            teamArr.push(manager);
         })
 };
 
-const promptRoster = () => {
-
+const promptRoster = teamData => {
+        teamData = [...teamArr]
+    
     return inquirer
         .prompt([
             {
@@ -55,6 +60,11 @@ const promptRoster = () => {
                 name: 'employeeRole',
                 message: 'Choose employee role:',
                 choices: ['Engineer', 'Intern']
+            },
+            {
+                type: 'input',
+                name: 'name',
+                message: 'Enter Employee name:',
             },
             {
                 type: 'input',
@@ -77,8 +87,25 @@ const promptRoster = () => {
                 name: 'school',
                 message: "Enter intern's school:",
                 when: ({ employeeRole }) => employeeRole === 'Intern'
+            },
+            {
+                type: 'confirm',
+                name: 'addToRoster',
+                message: 'Would you like to add another employee to the roster?',
+                default: false
             }
         ])
+        .then(({ employeeRole, name, id, email, github, school, addToRoster }) => {
+            if (employeeRole === 'Engineer') {
+                teamData.push(new Engineer(name, id, email, employeeRole, github));
+            } else {
+                const intern = new Intern(name, id, email, employeeRole, school);
+                teamData.push(intern);
+            };
+            if (addToRoster) {
+                return promptRoster();
+            } else { return teamData };
+        })
 };
 
 
@@ -87,8 +114,9 @@ const promptRoster = () => {
 function init() {
     promptUser()
         .then(promptRoster)
-        .then(employeeData => {
-            return generatePage(employeeData);
+        .then(teamData => {
+            return generatePage(teamData);
+            // console.log(employeeData);
         })
         .then(pageHtml => {
             return new Promise((resolve, reject) => {
@@ -97,7 +125,6 @@ function init() {
                         reject(err);
                         return;
                     }
-
                     resolve({
                         ok: true,
                         message: 'File created'
