@@ -15,9 +15,9 @@ const generateCards = templateData => {
                     </div>
                     <div class="card-body">
                         <p>ID: ${employee.id}</p>
-                        <p>Email: ${employee.email}</p>
+                        <a href="mailto:${employee.email}">Email: ${employee.email}</a>
                         ${employee.role === 'Manager' ? '<p>Office: ' + employee.office + '</p>' : ''}
-                        ${employee.role === 'Engineer' ? '<p>GitHub: ' + employee.github + '</p>' : ''}
+                        ${employee.role === 'Engineer' ? '<p>GitHub: <a href="https://github.com/' + employee.github + '">https://github.com/' + employee.github+'</a></p>' : ''}
                         ${employee.role === 'Intern' ? '<p>School: ' + employee.school + '</p>' : ''}
                     </div>
                 </div>
