@@ -1,6 +1,8 @@
 const inquirer = require('inquirer');
 const fs = require('fs')
 const generatePage = require('./src/page-template');
+const generateCards = require('./src/page-template');
+
 
 const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
@@ -45,8 +47,8 @@ const promptUser = () => {
 };
 
 const promptRoster = teamData => {
-        teamData = [...teamArr]
-    
+    teamData = [...teamArr]
+
     return inquirer
         .prompt([
             {
@@ -97,15 +99,18 @@ const promptRoster = teamData => {
         ])
         .then(({ employeeRole, name, id, email, github, school, addToRoster }) => {
             if (employeeRole === 'Engineer') {
-                teamData.push(new Engineer(name, id, email, employeeRole, github));
-            } else {
-                const intern = new Intern(name, id, email, employeeRole, school);
-                teamData.push(intern);
+                teamArr.push(new Engineer(name, id, email, employeeRole, github));
+                // teamData.push(new Engineer(name, id, email, employeeRole, github));
+            } else if (employeeRole === 'Intern') {
+                teamArr.push(new Intern(name, id, email, employeeRole, school));
+                // teamData.push(new Intern(name, id, email, employeeRole, school));
             };
             if (addToRoster) {
                 return promptRoster();
-            } else { return teamData };
+            }
+
         })
+        // .then(console.log(`Array: ${teamArr}, Data: ${teamData}`))
 };
 
 
@@ -115,8 +120,8 @@ function init() {
     promptUser()
         .then(promptRoster)
         .then(teamData => {
-            return generatePage(teamData);
-            // console.log(employeeData);
+            console.log(teamArr);
+            return generatePage(teamArr);
         })
         .then(pageHtml => {
             return new Promise((resolve, reject) => {
@@ -128,6 +133,20 @@ function init() {
                     resolve({
                         ok: true,
                         message: 'File created'
+                    })
+                })
+            })
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                fs.copyFile('./src/style.css', './dist/style.css', err => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve({
+                        ok: true,
+                        message: 'Stylesheet created!'
                     })
                 })
             })

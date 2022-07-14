@@ -4,8 +4,10 @@
     --tertiary: #ff3d2e;
 }
 
-* {
-    
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 
@@ -14,18 +16,22 @@ header {
     color: var(--secondary);
     height: 100px;
     display:flex;
-    
+    place-items:center;
+    justify-content: center;
 }
+
 
 .card-section {
     display:flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .card {
     background-color: var(--secondary);
     box-shadow: 5px 5px 5px gray;
     margin: 20px;
-    width: 150px;
+    width: 220px;
     padding: 10px;
 }
 
@@ -34,4 +40,8 @@ header {
     color: beige;
     padding: 5px;
     height: 50%;
+}
+
+.card-body {
+    font-size: small;
 }
